@@ -1,6 +1,6 @@
 import cv2 as cv
 
-cap = cv.VideoCapture('videoSource/lo6rBzkYw14.mp4')
+cap = cv.VideoCapture('lowResSample.mp4')
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
@@ -11,12 +11,15 @@ while (True):
     if ret == True:
 
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        orb = cv.ORB_create(nfeatures=2000)
+        orb = cv.ORB_create()
         kp, des = orb.detectAndCompute(gray, None)
         kp_image = cv.drawKeypoints(frame, kp, None, color=(0, 255, 0))
 
-        #result.write(kp_image)
-        cv.imshow('Frame', kp_image)
+        #display frame rate
+        fps = cap.get(cv.CAP_PROP_FPS)
+        print("Frames per second using video.get(cv.CAP_PROP_FPS) : {0}".format(fps))
+
+        cv.imshow("frame", kp_image)
 
         # Press S on keyboard to stop the process
         if cv.waitKey(1) & 0xFF == ord('s'):
