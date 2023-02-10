@@ -1,6 +1,6 @@
 import cv2 as cv
 
-cap = cv.VideoCapture('lowResSample.mp4')
+cap = cv.VideoCapture('videoSource/lo6rBzkYw14.mp4')
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
@@ -15,13 +15,15 @@ while (True):
         kp, des = orb.detectAndCompute(gray, None)
         kp_image = cv.drawKeypoints(frame, kp, None, color=(0, 255, 0))
 
-        #display frame rate
-        fps = cap.get(cv.CAP_PROP_FPS)
-        print("Frames per second using video.get(cv.CAP_PROP_FPS) : {0}".format(fps))
+        #print(kp)
 
+        #print("FPS: {0}".format(cap.get(cv.CAP_PROP_FPS)))
+
+        #output = cv.putText(kp_image, "FPS: {0}".format(cap.get(cv.CAP_PROP_FPS)), (10, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv.LINE_AA)
+        #output = cv.putText(output, "Frame: {0}".format(cap.get(cv.CAP_PROP_POS_FRAMES)), (10, 100), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv.LINE_AA)
         cv.imshow("frame", kp_image)
 
-        # Press S on keyboard to stop the process
+        # Press S to stop the process
         if cv.waitKey(1) & 0xFF == ord('s'):
             break
         
