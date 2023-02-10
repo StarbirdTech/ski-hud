@@ -11,19 +11,14 @@ while (True):
     if ret == True:
 
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        orb = cv.ORB_create()
+        orb = cv.ORB_create(nfeatures=2000)
         kp, des = orb.detectAndCompute(gray, None)
         kp_image = cv.drawKeypoints(frame, kp, None, color=(0, 255, 0))
 
-        #print(kp)
+        #result.write(kp_image)
+        cv.imshow('Frame', kp_image)
 
-        #print("FPS: {0}".format(cap.get(cv.CAP_PROP_FPS)))
-
-        #output = cv.putText(kp_image, "FPS: {0}".format(cap.get(cv.CAP_PROP_FPS)), (10, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv.LINE_AA)
-        #output = cv.putText(output, "Frame: {0}".format(cap.get(cv.CAP_PROP_POS_FRAMES)), (10, 100), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv.LINE_AA)
-        cv.imshow("frame", kp_image)
-
-        # Press S to stop the process
+        # Press S on keyboard to stop the process
         if cv.waitKey(1) & 0xFF == ord('s'):
             break
         

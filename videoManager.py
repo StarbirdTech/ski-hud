@@ -54,8 +54,7 @@ def downloadVideo(video):
         return
     else:
         try:
-            # get lowest res video
-            
+
             video.streams.filter(progressive=True, file_extension='mp4').get_highest_resolution().download(output_path="videoSource", filename=videoID+'.mp4')
         except:
             print('video download failed')
