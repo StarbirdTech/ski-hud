@@ -26,9 +26,12 @@ while (True):
             center = (int(x), int(y))
             cv2.circle(img_with_keypoints, center, 1, (0, 0, 255), 2)
 
-        # Display the image
-        cv2.imshow("Features", img_with_keypoints)
+        # print fps
+        print(vid.get(cv2.CAP_PROP_FPS))
+        vidOverlay = cv2.putText(img_with_keypoints, str(vid.get(cv2.CAP_PROP_FPS)), (10, 50), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 2, cv2.LINE_AA)
 
+
+        cv2.imshow("Features", vidOverlay)
         if cv2.waitKey(1) & 0xFF == ord('s'):
             break
     else:
