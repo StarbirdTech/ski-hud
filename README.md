@@ -1,1 +1,2 @@
-# ski-hud
+# SkiHUD
+
