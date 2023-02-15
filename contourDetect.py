@@ -1,9 +1,15 @@
 import cv2
+import serial
+
+ser = serial.Serial('COM4')
+print(ser.name)
 
 vid = cv2.VideoCapture(0)
 if not vid.isOpened():
     print("Cannot open camera")
     exit()
+
+objects = []
 
 while (True):
     ret, frame = vid.read()
@@ -44,12 +50,20 @@ while (True):
             center_x = int(M['m10'] / M['m00'])
             center_y = int(M['m01'] / M['m00'])
 
+            objects.append((center_x, center_y))
+          
             # Draw the contour and center position on the image
             cv2.drawContours(frame, [cnt], 0, (0, 255, 0), 2)
             cv2.circle(frame, (center_x, center_y), 2, (0, 0, 255), -1)
 
         # Display the image
         cv2.imshow('Image', frame)
+
+        #send object coordinates to arduino and clear objects list
+        if len(objects) > 0:
+            print(objects)
+            ser.write(str(objects).encode())
+            objects.clear()
 
         # Press S on keyboard to stop the process
         if cv2.waitKey(1) & 0xFF == ord('s'):
