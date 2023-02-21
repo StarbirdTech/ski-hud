@@ -2,8 +2,7 @@ import cv2
 import serial
 import json
 
-ser = serial.Serial('COM12', 1000000)
-print(ser.name)
+ser = serial.Serial('COM7', 1000000)
 
 vid = cv2.VideoCapture(0)
 if not vid.isOpened():
@@ -69,7 +68,7 @@ while (True):
             center_y = int(M['m01'] / M['m00'])
 
             objects.append((center_x, center_y))
-          
+
             # Draw the contour and center position on the image
             #cv2.drawContours(frame, [cnt], 0, (0, 255, 0), 2)
             cv2.rectangle(frame, (center_x-10, center_y-10), (center_x+10, center_y+10), (0, 0, 255))
@@ -77,11 +76,11 @@ while (True):
         # Display the image
         cv2.imshow('Image', frame)
 
-        #send object coordinates to arduino and clear objects list
-        if len(objects) > 0:
-            print(objects)
-            ser.write(json.dumps(objects).encode())
-            objects.clear()
+        # send object coordinates to arduino and clear objects list
+
+        print(json.dumps(objects).encode())
+        ser.write(json.dumps(objects).encode())
+        objects.clear()
 
         # Press S on keyboard to stop the process
         if cv2.waitKey(1) & 0xFF == ord('s'):
