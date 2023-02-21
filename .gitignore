@@ -1,6 +1,7 @@
 .vscode/*
 videoSource/*
 *.mp4
+.vscode/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
