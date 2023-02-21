@@ -1,6 +1,6 @@
 import cv2 as cv
 
-cap = cv.VideoCapture('videoSource/lo6rBzkYw14.mp4')
+cap = cv.VideoCapture(0)
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
@@ -12,11 +12,15 @@ while (True):
 
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         orb = cv.ORB_create(nfeatures=2000)
-        kp, des = orb.detectAndCompute(gray, None)
-        kp_image = cv.drawKeypoints(frame, kp, None, color=(0, 255, 0))
+        kp = orb.detect(gray, None)
+        output = cv.drawKeypoints(frame, kp, None, color=(0, 255, 0))
 
-        #result.write(kp_image)
-        cv.imshow('Frame', kp_image)
+        for keypoint in kp:
+            x, y = keypoint.pt
+            center = (int(x), int(y))
+            cv.circle(output, center, 1, (0, 0, 255), 2)
+
+        cv.imshow('Frame', output)
 
         # Press S on keyboard to stop the process
         if cv.waitKey(1) & 0xFF == ord('s'):
@@ -25,12 +29,7 @@ while (True):
     else:
         break
 
-# When everything done, release
-# the video capture and video
-# write objects
 cap.release()
-
-# Closes all the frames
 cv.destroyAllWindows()
 
 print("The video was successfully saved")
