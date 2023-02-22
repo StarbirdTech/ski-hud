@@ -1,8 +1,11 @@
 import cv2
 import serial
 import json
+import listSerialPorts
 
-ser = serial.Serial('COM7', 1000000)
+serialPorts = listSerialPorts.serial_ports()
+print(serialPorts)
+ser = serial.Serial(serialPorts[int(input())], 1000000)
 
 vid = cv2.VideoCapture(0)
 if not vid.isOpened():
@@ -81,11 +84,6 @@ while (True):
         print(json.dumps(objects).encode())
         ser.write(json.dumps(objects).encode())
         objects.clear()
-
-        # Press S on keyboard to stop the process
-        if cv2.waitKey(1) & 0xFF == ord('s'):
-            break
-
     else:
         break
 
