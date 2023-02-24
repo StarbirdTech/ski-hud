@@ -1,11 +1,8 @@
 import cv2
-import serial
 import json
-import listSerialPorts
+from lib import serialSelect
 
-serialPorts = listSerialPorts.serial_ports()
-print(serialPorts)
-ser = serial.Serial(serialPorts[int(input())], 1000000)
+# load serial port
 
 vid = cv2.VideoCapture(0)
 if not vid.isOpened():
