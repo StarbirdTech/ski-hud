@@ -10,20 +10,37 @@
 
 U8X8_SSD1306_128X64_NONAME_4W_SW_SPI u8x8(/* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 7, /* reset=*/ 8);
 
-int arr[3][2] = {{100,30},{90,90},{75,50}};
+int count = 0;
+int* points = NULL; // Initialize the pointer to NULL
 
-void setup()
-{
+void setup() {
   Serial.begin(1000000);
-  Serial.write("Hello!");
   u8x8.begin();
   u8x8.setFont(u8x8_font_amstrad_cpc_extended_f);
 }
 
 void loop() {
-  for (int i = 0; i < 3; i++) {
-    u8x8.drawString(arr[i][0], arr[i][1], "!");
-    delay(200);
+  if (Serial.available()) {
+    int data = Serial.read();
+    if (data == '\n') { // The end of the data has been reached
+      // Allocate the array based on the number of elements received
+      points = new int[count];
+      u8x8.clear();
+      // Read the data into the array
+      for (int i = 0; i < count; i += 2) {
+        int x = points[i];
+        int y = points[i+1];
+        u8x8.drawString(x, y, "!");
+      }
+      
+      // Free the memory allocated for the array
+      delete[] points;
+      
+      // Reset the count
+      count = 0;
+    } else {
+      points[count] = Serial.parseInt();
+      count++;
+    }
   }
-  u8x8.clear();
 }

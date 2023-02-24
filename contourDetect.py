@@ -17,8 +17,6 @@ screenW = 128
 screenH = 64
 screenRatio = screenW / screenH
 
-objects = []
-
 while (True):
     ret, frame = vid.read()
 
@@ -29,9 +27,6 @@ while (True):
             frame = frame[0:frameH, int((frameW - (frameH * screenRatio)) / 2):int((frameW + (frameH * screenRatio)) / 2)]
         else:
             frame = frame[int((frameH - (frameW / screenRatio)) / 2):int((frameH + (frameW / screenRatio)) / 2), 0:frameW]
-
-        # Resize the image to the desired size
-        frame = cv2.resize(frame, (screenW, screenH), interpolation=cv2.INTER_AREA)
 
         # Convert the image to grayscale
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -67,20 +62,56 @@ while (True):
             center_x = int(M['m10'] / M['m00'])
             center_y = int(M['m01'] / M['m00'])
 
+            objects = []
             objects.append((center_x, center_y))
 
-            # Draw the contour and center position on the image
-            #cv2.drawContours(frame, [cnt], 0, (0, 255, 0), 2)
-            cv2.rectangle(frame, (center_x-10, center_y-10), (center_x+10, center_y+10), (0, 0, 255))
+        largeFrame = frame
 
-        # Display the image
-        cv2.imshow('Image', frame)
+        # Get the height and width of the image
+        height, width = largeFrame.shape[:2]
+        
+        # Define the points from which the images will be cropped
+        top_left = (0, 0)  # (x, y)
+        bottom_right = (width, height)  # (x, y)
+        
+        # Define the size of each cropped image
+        crop_top_left_size = (128, 64)  # (width, height)
+        crop_bottom_right_size = (int(width/2), int(height/2))  # (width, height)
+        
+        # Crop the image into two smaller images
+        leftFrame = largeFrame[top_left[1]:top_left[1]+crop_top_left_size[1], top_left[0]:top_left[0]+crop_top_left_size[0]]
+        rightFrame = largeFrame[bottom_right[1]-crop_bottom_right_size[1]:bottom_right[1], bottom_right[0]-crop_bottom_right_size[0]:bottom_right[0]]
+        
+        # map object coordinates to cropped frames and set to leftObjects and rightObjects
+        leftObjects = []
+        rightObjects = []
+        for i in range(len(objects)):
+            if objects[i][0] < crop_top_left_size[0] and objects[i][1] < crop_top_left_size[1]:
+                leftObjects.append((objects[i][0], objects[i][1]))
+            elif objects[i][0] > crop_top_left_size[0] and objects[i][1] > crop_top_left_size[1]:
+                rightObjects.append((objects[i][0] - crop_top_left_size[0], objects[i][1] - crop_top_left_size[1]))
 
-        # send object coordinates to arduino and clear objects list
+        for i in range(len(objects)):
+            cv2.circle(largeFrame, (objects[i][0], objects[i][1]), 5, (0, 0, 255), -1)
+        for i in range(len(leftObjects)):
+            cv2.circle(leftFrame, (leftObjects[i][0], leftObjects[i][1]), 5, (0, 0, 255), -1)
+        for i in range(len(rightObjects)):
+            cv2.circle(rightFrame, (rightObjects[i][0], rightObjects[i][1]), 5, (0, 0, 255), -1)
 
-        print(json.dumps(objects).encode())
-        ser.write(json.dumps(objects).encode())
-        objects.clear()
+        cv2.imshow('Image', largeFrame)
+        cv2.imshow('Top Left', leftFrame)
+        cv2.imshow('Bottom Right', rightFrame)
+
+        stringToSend = ",".join([f"{x[0]},{x[1]}" for x in leftObjects])
+
+        # Append a newline character to the string to indicate the end of the message
+        stringToSend += '\n'
+
+        # Send the string over serial
+        ser.write(stringToSend.encode())
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
     else:
         break
 
