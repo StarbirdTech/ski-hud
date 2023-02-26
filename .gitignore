@@ -2,6 +2,7 @@
 videoSource/*
 *.mp4
 .vscode/*
+ArduinoOutput/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

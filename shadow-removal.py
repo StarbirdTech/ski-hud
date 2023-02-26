@@ -1,7 +1,5 @@
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 
 img = cv2.imread("test1.jpg")
 
