@@ -11,7 +11,7 @@ leftSerial = serial.Serial(lib.getSerialPort("Arduino"), 9600)
 rightSerial = serial.Serial(lib.getSerialPort("Arduino"), 9600)
 time.sleep(5)
 
-vid = cv2.VideoCapture("lowResSample.mp4")
+vid = cv2.VideoCapture("videoSource/lo6rBzkYw14.mp4")
 if not vid.isOpened():
     print("Cannot open camera")
     exit()

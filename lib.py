@@ -62,6 +62,10 @@ def getObjects(vid, debug=False):
         # Detect contours of the objects
         contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+        # draw contours
+        if debug:
+            cv2.drawContours(frame, contours, -1, (0, 255, 0), 2)
+
         objects = []
         # Loop through each contour
         for cnt in contours:
