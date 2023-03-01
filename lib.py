@@ -81,14 +81,10 @@ def getObjects(vid, debug=False):
         leftScreenBounds = [[0, screenW], [frameH/2 - screenH/2, frameH/2 + screenH/2]]
         rightScreenBounds = [[frameW-screenW, frameW], [frameH/2 - screenH/2, frameH/2 + screenH/2]]
 
-        leftObjects = []
-        rightObjects = []
-
-        for obj in objects:
-            if obj[0] > leftScreenBounds[0][0] and obj[0] < leftScreenBounds[0][1] and obj[1] > leftScreenBounds[1][0] and obj[1] < leftScreenBounds[1][1]:
-                leftObjects.append(obj)
-            elif obj[0] > rightScreenBounds[0][0] and obj[0] < rightScreenBounds[0][1] and obj[1] > rightScreenBounds[1][0] and obj[1] < rightScreenBounds[1][1]:
-                rightObjects.append(obj)
+        # left objects is all objects that are within left screen bounds
+        leftObjects = [obj for obj in objects if obj[0] >= leftScreenBounds[0][0] and obj[0] <= leftScreenBounds[0][1] and obj[1] >= leftScreenBounds[1][0] and obj[1] <= leftScreenBounds[1][1]]
+        # right objects is all objects that are within right screen bounds
+        rightObjects = [obj for obj in objects if obj[0] >= rightScreenBounds[0][0] and obj[0] <= rightScreenBounds[0][1] and obj[1] >= rightScreenBounds[1][0] and obj[1] <= rightScreenBounds[1][1]]
 
         if debug:
             # left screen objects
@@ -108,7 +104,9 @@ def getObjects(vid, debug=False):
             cv2.imshow('frame', frame)
             cv2.waitKey(1)
 
-        return [leftObjects, rightObjects]
+        # return the left and right objects like this [[left objects], [right objects]]
+        # remove the tuples
+        return [list(map(list, leftObjects)), list(map(list, rightObjects))]
     return None
 
 
