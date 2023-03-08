@@ -7,11 +7,11 @@ import cv2
 #ser = serial.Serial(port, 9600)
 
 
-leftSerial = serial.Serial(lib.getSerialPort("Arduino"), 9600)
-rightSerial = serial.Serial(lib.getSerialPort("Arduino"), 9600)
+#leftSerial = serial.Serial("COM21", 9600)
+# rightSerial = serial.Serial(lib.getSerialPort("Arduino"), 9600)
 time.sleep(5)
-
-vid = cv2.VideoCapture("videoSource/lo6rBzkYw14.mp4")
+# "videoSource/lo6rBzkYw14.mp4"
+vid = cv2.VideoCapture(0)
 if not vid.isOpened():
     print("Cannot open camera")
     exit()
@@ -53,16 +53,16 @@ try:
             rightData = [0 for _ in range(12)]
 
         print(str(leftData))
-        leftSerial.write(str(leftData).encode())
+        #leftSerial.write(str(leftData).encode())
         print(str(rightData))
-        rightSerial.write(str(rightData).encode())
+        #rightSerial.write(str(rightData).encode())
 except KeyboardInterrupt:
     print("Exiting...")
 except:
     import traceback
     traceback.print_exc()
 finally:
-    leftSerial.close()
-    rightSerial.close()
+    #leftSerial.close()
+    #rightSerial.close()
     vid.release()
     cv2.destroyAllWindows()

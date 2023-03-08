@@ -17,13 +17,59 @@ void setup()
 
 void loop()
 {
-  if (Serial.available() >= maxArraySize*2)
+  // u8g2.drawDisc(0,0, 200);
+
+  // u8g2.sendBuffer();
+  // u8g2.clearBuffer();
+  // if (Serial.available() >= maxArraySize*2)
+  // {
+  //   for (int i = 0; i < maxArraySize/2; i++)
+  //   {
+  //     u8g2.drawDisc(Serial.parseInt(), Serial.parseInt(), 2);
+  //   }
+  //   u8g2.sendBuffer();
+  //   u8g2.clearBuffer();
+  // }
+
+  for (int i = 0; i < maxArraySize; i += 2)
   {
-    for (int i = 0; i < maxArraySize/2; i++)
+    u8g2.drawDisc(myArray[i], myArray[i + 1], 1);
+
+    if (random(500) == 0)
     {
-      u8g2.drawDisc(Serial.parseInt(), Serial.parseInt(), 2);
+      myArray[i] = random(128);
+      myArray[i + 1] = random(64);
     }
-    u8g2.sendBuffer();
-    u8g2.clearBuffer();
+    else if (random(100) < 10)
+    {
+      // if near the edge of the screen, move in the opposite direction
+      // otherwise, move in a random direction
+      if (myArray[i] < 5)
+      {
+        myArray[i] += random(5);
+      }
+      else if (myArray[i] > 123)
+      {
+        myArray[i] -= random(5);
+      }
+      else
+      {
+        myArray[i] += random(-5, 5);
+      }
+      if (myArray[i + 1] < 5)
+      {
+        myArray[i + 1] += random(5);
+      }
+      else if (myArray[i + 1] > 59)
+      {
+        myArray[i + 1] -= random(5);
+      }
+      else
+      {
+        myArray[i + 1] += random(-5, 5);
+      }
     }
+  }
+  u8g2.sendBuffer();
+  u8g2.clearBuffer();
 }
