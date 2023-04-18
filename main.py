@@ -2,6 +2,8 @@ import cv2
 import lib
 import time
 from pySerialTransfer import pySerialTransfer as txfer
+import numpy as np
+import matplotlib.pyplot as plt
 
 run = True
 debug = True
