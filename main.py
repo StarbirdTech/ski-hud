@@ -1,48 +1,50 @@
 import cv2
-
 import lib
 import time
 from pySerialTransfer import pySerialTransfer as txfer
 
-if __name__ == '__main__':
-    link = None
-    vid = None
-    try:
-        link = txfer.SerialTransfer(lib.getSerialPort("Arduino"))
+run = True
+debug = True
 
-        link.open()
-        time.sleep(5)  # allow some time for the Arduino to completely reset
+sourceLocation = 0
+mediaSource = cv2.VideoCapture(0)
 
-        vid = cv2.VideoCapture(0)
-        if not vid.isOpened():
-            print("Cannot open camera")
-            exit()
+if mediaSource.isOpened():
+    if serialPort := lib.getSerialPort("Arduino"):
+        serialLink = txfer.SerialTransfer(serialPort)
+        serialLink.open()
+        time.sleep(5)
+    else:
+        if not debug:
+            run = False
+else:
+    run = False
+    if type(sourceLocation) is int:
+        print(f"Cannot open camera {sourceLocation}")
+    elif type(sourceLocation) is str:
+        print(f"Cannot open video {sourceLocation}")
+    else:
+        print("mediaSource is incorrect type")
 
-        while (True):
-            if objects := lib.getObjects(vid, debug=True):
-                print("left: {}".format(objects[0]))
-                print("right: {}".format(objects[1]))
+while run:
+    if objects := lib.getObjects(mediaSource, debug=True):
+        print("left: {}".format(objects[0]))
+        print("right: {}".format(objects[1]))
+        payload = serialLink.tx_obj([y for x in objects[0] for y in x])
+        serialLink.send(payload)
+        time.sleep(0.01)
+    else:
+        print("none")
 
-                payload = link.tx_obj([y for x in objects[0] for y in x])
-                link.send(payload)
-
-                time.sleep(0.01)
-            else:
-                print("none")
-
-    except KeyboardInterrupt:
-        if link is not None:
-            link.close()
-        if vid is not None:
-            vid.release()
-        cv2.destroyAllWindows()
-
-    except:
-        import traceback
-        traceback.print_exc()
-
-        if link is not None:
-            link.close()
-        if vid is not None:
-            vid.release()
-        cv2.destroyAllWindows()
+print("Exiting...")
+if mediaSource:
+    mediaSource.release()
+    print("✅  mediaSource closed")
+else:
+    print("🟨  no mediaSource found")
+if serialLink:
+    serialLink.close()
+    print("✅  serialLink closed")
+else:
+    print("🟨  no serialLink found")
+cv2.destroyAllWindows()

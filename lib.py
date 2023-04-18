@@ -16,8 +16,6 @@ def getSerialPort(searchString):
             ports.append(port[0])
     if len(ports) == 0:
         print("No serial port found with search string: " + searchString)
-        print("Exiting...")
-        exit()
     elif len(ports) == 1:
         return ports[0]
     else:
